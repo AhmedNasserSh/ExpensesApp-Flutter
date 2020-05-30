@@ -1,6 +1,9 @@
 # expenses_app
 
-A new Flutter project.
+A Simple Flutter project to track personal expenses .
+
+<img src="android.png" width="300" />
+<img src="ios.png" width="300" />
 
 ## Getting Started
 
