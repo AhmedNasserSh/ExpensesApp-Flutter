@@ -52,7 +52,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final List<Transaction> _transations = [
     Transaction(
         amount: 10,
@@ -60,20 +60,20 @@ class _MyHomePageState extends State<MyHomePage> {
         id: DateTime.now().toString(),
         title: 'TX1'),
     Transaction(
-        amount: 10,
+        amount: 40,
         date: DateTime.now(),
         id: DateTime.now().toString(),
-        title: 'TX1'),
+        title: 'TX2'),
     Transaction(
-        amount: 10,
+        amount: 30,
         date: DateTime.now(),
         id: DateTime.now().toString(),
-        title: 'TX1'),
+        title: 'TX3'),
     Transaction(
-        amount: 10,
+        amount: 20,
         date: DateTime.now(),
         id: DateTime.now().toString(),
-        title: 'TX1'),
+        title: 'TX4'),
   ];
   List<Transaction> get _recentTransaction {
     return _transations.where((tx) {
@@ -82,6 +82,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   bool _showChart = false;
+
+@override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   void _addNewTransaction(String title, double amount, DateTime date) {
     final newTx = Transaction(
@@ -155,15 +172,45 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (isLandScape) buildSwitch(context),
-            if (!isLandScape) buildChart(mediaQuery, appBar, 0.3),
-            if (!isLandScape) transList,
             if (isLandScape)
-              _showChart ? buildChart(mediaQuery, appBar, 0.7) : transList,
+              ..._buildLandscapeCotent(
+                context,
+                _showChart,
+                mediaQuery,
+                appBar,
+                transList,
+              ),
+            if (!isLandScape)
+              ..._buildPortraitCotent(
+                mediaQuery,
+                appBar,
+                transList,
+              )
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _buildLandscapeCotent(
+    BuildContext context,
+    bool showChart,
+    MediaQueryData mediaQuery,
+    PreferredSizeWidget appBar,
+    Container transList,
+  ) {
+    return [
+      buildSwitch(context),
+      _showChart ? buildChart(mediaQuery, appBar, 0.7) : transList,
+    ];
+  }
+
+  List<Widget> _buildPortraitCotent(
+    MediaQueryData mediaQuery,
+    PreferredSizeWidget appBar,
+    Container transList,
+  ) {
+    return [buildChart(mediaQuery, appBar, 0.3), transList,];
   }
 
   AppBar buildAppBar(BuildContext context) {
