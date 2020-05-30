@@ -2,8 +2,8 @@
 
 A Simple Flutter project to track personal expenses .
 
-![alt-text-1] <img src="android.png" width="300" />
-![alt-text-2] <img src="ios.png" width="300" />
+![alt-text-1](android.png "android") ![alt-text-2](ios.png "iOS-2")
+
 
 ## Getting Started
 
