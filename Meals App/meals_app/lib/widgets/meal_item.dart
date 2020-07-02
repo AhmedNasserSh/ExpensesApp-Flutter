@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../models/meal.dart';
 import '../screens/meal_details_screen.dart';
@@ -63,7 +62,11 @@ class MealItem extends StatelessWidget {
   }
 
   void didSelectMeal(BuildContext context) {
-    Navigator.of(context).pushNamed(MealDetailsScreen.routeName,arguments: id);
+    Navigator.of(context)
+        .pushNamed(
+      MealDetailsScreen.routeName,
+      arguments: id,
+    );
   }
 
   @override
@@ -94,6 +97,7 @@ class MealItem extends StatelessWidget {
                 ),
                 Positioned(
                   bottom: 20,
+                  right: 10,
                   child: Container(
                     width: 300,
                     color: Colors.black54,
