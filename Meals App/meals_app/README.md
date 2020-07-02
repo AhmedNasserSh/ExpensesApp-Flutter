@@ -1,6 +1,7 @@
 # meals_app
 
-A new Flutter project.
+![Alt Text](https://media.giphy.com/media/ej0VNiU65KRC9Pg5Tu/giphy.gif) 
+
 
 ## Getting Started
 
