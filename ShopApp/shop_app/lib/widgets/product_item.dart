@@ -11,6 +11,27 @@ class ProductItem extends StatelessWidget {
 
   // ProductItem({this.id, this.title, this.imageUrl});
 
+  void _addCartTime(Cart cart, Product product, BuildContext context) {
+    cart.addItem(
+      product.id,
+      product.title,
+      product.price,
+    );
+    Scaffold.of(context).hideCurrentSnackBar();
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'item added to cart',
+          textAlign: TextAlign.center,
+        ),
+        duration: Duration(seconds: 2),
+        action: SnackBarAction(
+            label: 'UNDO',
+            onPressed: () => cart.removeSnigleCartItem(product.id)),
+      ),
+    ); // of context means nears scaffold whiich is products overview
+  }
+
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
@@ -47,11 +68,7 @@ class ProductItem extends StatelessWidget {
           ),
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart),
-            onPressed: () => cart.addItem(
-              product.id,
-              product.title,
-              product.price,
-            ),
+            onPressed: () => _addCartTime(cart, product, context),
             color: Theme.of(context).accentColor,
           ),
         ),

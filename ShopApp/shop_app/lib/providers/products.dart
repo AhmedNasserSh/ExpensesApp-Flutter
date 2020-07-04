@@ -64,8 +64,24 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct() {
-    //_items.add(value);
+  void addProduct(Product product) {
+    product.id = DateTime.now().toString();
+    _items.insert(0, product);
+    notifyListeners();
+  }
+
+  void updateProduct(Product product) {
+    final index = _items.indexWhere((element) => element.id == product.id);
+    if (index >= 0) {
+      _items[index] = product;
+      notifyListeners();
+    } else {
+      addProduct(product);
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 }

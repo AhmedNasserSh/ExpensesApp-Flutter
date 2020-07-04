@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../screens/orders_screen.dart';
 import '../providers/cart.dart';
 import '../providers/orders.dart';
 import '../widgets/cart_item.dart';
@@ -51,6 +52,9 @@ class CartScreen extends StatelessWidget {
                         cart.items.values.toList(),
                         cart.totalAmount,
                       );
+                      if (cart.totalAmount != 0)
+                        Navigator.of(context)
+                            .pushReplacementNamed(OrdersScreen.routeName);
                       cart.clearCart();
                     },
                     textColor: Theme.of(context).primaryColor,
