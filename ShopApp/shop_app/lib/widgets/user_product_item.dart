@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../screens/edit_products_screen.dart';
+import '../providers/products.dart';
 
 class UserProductItem extends StatelessWidget {
   final String id;
   final String title;
   final String imageUrl;
-  final Function deleteProduct;
-  UserProductItem({this.id, this.title, this.imageUrl, this.deleteProduct});
+  final String isFavourite;
+  UserProductItem({this.id, this.title, this.imageUrl, this.isFavourite});
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    final products = Provider.of<Products>(context);
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -27,7 +31,15 @@ class UserProductItem extends StatelessWidget {
             ),
             IconButton(
               icon: Icon(Icons.delete),
-              onPressed: deleteProduct,
+              onPressed: () async {
+                try {
+                  await products.deleteProduct(id);
+                } catch (error) {
+                  scaffold.showSnackBar(SnackBar(
+                    content: Text(error.toString()),
+                  ));
+                }
+              },
               color: Theme.of(context).errorColor,
             ),
           ],

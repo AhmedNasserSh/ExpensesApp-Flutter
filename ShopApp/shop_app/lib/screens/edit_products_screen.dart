@@ -17,6 +17,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageURLFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
   var isInit = false;
+  var _isLoading = false;
 
   var _editedProduct = Product(
     id: null,
@@ -76,9 +77,31 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void _saveForm() {
     if (_form.currentState.validate()) {
       _form.currentState.save();
+      setState(() {
+        _isLoading = true;
+      });
       Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct);
-      Navigator.of(context).pop();
+          .updateProduct(_editedProduct)
+          .catchError((error) {
+        return showDialog<Null>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('An Error Occured'),
+                  content: Text(error.toString()),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Ok'),
+                      onPressed: () => Navigator.of(context).pop(),
+                    )
+                  ],
+                ));
+      }).then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        Navigator.of(context).pop();
+      });
     }
   }
 
@@ -94,115 +117,121 @@ class _EditProductScreenState extends State<EditProductScreen> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _form,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                initialValue: _initValues['title'],
-                decoration: InputDecoration(labelText: 'Title'),
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_priceFocusNode);
-                },
-                validator: (value) {
-                  if (value.isEmpty) return 'Title is Empty';
-                  return null;
-                },
-                onSaved: (newValue) {
-                  _editedProduct.title = newValue;
-                },
-              ),
-              TextFormField(
-                initialValue: _initValues['price'],
-                decoration: InputDecoration(labelText: 'Price'),
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                focusNode: _priceFocusNode,
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_descriptionFocusNode);
-                },
-                validator: (value) {
-                  if (value.isEmpty) return 'Price is Empty';
-                  if (double.tryParse(value) == null)
-                    return 'Price is invalide';
-                  if (double.parse(value) <= 0) return 'Price is invalide';
-                  return null;
-                },
-                onSaved: (newValue) {
-                  _editedProduct.price = double.parse(newValue);
-                },
-              ),
-              TextFormField(
-                initialValue: _initValues['desc'],
-                decoration: InputDecoration(labelText: 'Description'),
-                maxLines: 3,
-                keyboardType: TextInputType.multiline,
-                focusNode: _descriptionFocusNode,
-                validator: (value) {
-                  if (value.isEmpty) return 'Description is Empty';
-                  return null;
-                },
-                onSaved: (newValue) {
-                  _editedProduct.description = newValue;
-                },
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    width: 100,
-                    height: 100,
-                    margin: EdgeInsets.only(
-                      top: 8,
-                      right: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        width: 1,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    child: _imageUrlController.text.isEmpty
-                        ? Text('Enter a URL')
-                        : FittedBox(
-                            child: Image.network(
-                              _imageUrlController.text,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(labelText: 'Image URL'),
-                      keyboardType: TextInputType.url,
-                      textInputAction: TextInputAction.done,
-                      controller: _imageUrlController,
-                      focusNode: _imageURLFocusNode,
-                      onFieldSubmitted: (_) => _saveForm,
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _form,
+                child: ListView(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: _initValues['title'],
+                      decoration: InputDecoration(labelText: 'Title'),
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(_priceFocusNode);
+                      },
                       validator: (value) {
-                        if (value.isEmpty) return 'Image URL is Empty';
-                        var urlPattern =
-                            r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
-                        var result =
-                            new RegExp(urlPattern, caseSensitive: false)
-                                .hasMatch(value);
-                        if (!result) return 'Invalid URL';
+                        if (value.isEmpty) return 'Title is Empty';
                         return null;
                       },
                       onSaved: (newValue) {
-                        _editedProduct.imageUrl = newValue;
+                        _editedProduct.title = newValue;
                       },
                     ),
-                  ),
-                ],
+                    TextFormField(
+                      initialValue: _initValues['price'],
+                      decoration: InputDecoration(labelText: 'Price'),
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      focusNode: _priceFocusNode,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(_descriptionFocusNode);
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) return 'Price is Empty';
+                        if (double.tryParse(value) == null)
+                          return 'Price is invalide';
+                        if (double.parse(value) <= 0)
+                          return 'Price is invalide';
+                        return null;
+                      },
+                      onSaved: (newValue) {
+                        _editedProduct.price = double.parse(newValue);
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: _initValues['desc'],
+                      decoration: InputDecoration(labelText: 'Description'),
+                      maxLines: 3,
+                      keyboardType: TextInputType.multiline,
+                      focusNode: _descriptionFocusNode,
+                      validator: (value) {
+                        if (value.isEmpty) return 'Description is Empty';
+                        return null;
+                      },
+                      onSaved: (newValue) {
+                        _editedProduct.description = newValue;
+                      },
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                          width: 100,
+                          height: 100,
+                          margin: EdgeInsets.only(
+                            top: 8,
+                            right: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          child: _imageUrlController.text.isEmpty
+                              ? Text('Enter a URL')
+                              : FittedBox(
+                                  child: Image.network(
+                                    _imageUrlController.text,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            decoration: InputDecoration(labelText: 'Image URL'),
+                            keyboardType: TextInputType.url,
+                            textInputAction: TextInputAction.done,
+                            controller: _imageUrlController,
+                            focusNode: _imageURLFocusNode,
+                            onFieldSubmitted: (_) => _saveForm,
+                            validator: (value) {
+                              if (value.isEmpty) return 'Image URL is Empty';
+                              var urlPattern =
+                                  r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
+                              var result =
+                                  new RegExp(urlPattern, caseSensitive: false)
+                                      .hasMatch(value);
+                              if (!result) return 'Invalid URL';
+                              return null;
+                            },
+                            onSaved: (newValue) {
+                              _editedProduct.imageUrl = newValue;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
