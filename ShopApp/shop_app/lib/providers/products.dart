@@ -42,6 +42,11 @@ class Products with ChangeNotifier {
 
   var showFavOnly = false;
 
+  final String authToken;
+  final String userId;
+
+  Products(this.authToken, this.userId, this._items);
+
   List<Product> get items {
     // if (showFavOnly) {
     //   return _items.where((element) => element.isFavourite).toList();
@@ -66,32 +71,42 @@ class Products with ChangeNotifier {
   //   showFavOnly = false;
   //   notifyListeners();
   // }
-  Future<void> fetchProducts() {
-    const url = "https://shopapp-7e003.firebaseio.com/products.json";
+  Future<void> fetchProducts([bool fliterByUser = false]) {
+    final filterString =
+        fliterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+    final url =
+        'https://shopapp-7e003.firebaseio.com/products.json?auth=$authToken$filterString';
     return http.get(url).then((response) {
       final data = json.decode(response.body) as Map<String, dynamic>;
       print(data);
       if (data == null) {
         return;
       }
-      final List<Product> products = [];
-      data.forEach((key, prodData) {
-        products.add(Product(
-          id: key,
-          title: prodData['title'],
-          description: prodData['description'],
-          price: prodData['price'],
-          imageUrl: prodData['imageUrl'],
-          isFavourite: prodData['isFavourite'],
-        ));
+      final favUrl =
+          "https://shopapp-7e003.firebaseio.com/userFavorites/$userId.json?auth=$authToken";
+      http.get(favUrl).then((reposne) {
+        final favData = json.decode(reposne.body);
+
+        final List<Product> products = [];
+        data.forEach((prodId, prodData) {
+          products.add(Product(
+            id: prodId,
+            title: prodData['title'],
+            description: prodData['description'],
+            price: prodData['price'],
+            imageUrl: prodData['imageUrl'],
+            isFavourite: favData == null ? false : favData[prodId] ?? false,
+          ));
+        });
+        _items = products;
+        notifyListeners();
       });
-      _items = products;
-      notifyListeners();
     }).catchError((error) {});
   }
 
   Future<void> addProduct(Product product) async {
-    const url = "https://shopapp-7e003.firebaseio.com/products.json";
+    final url =
+        "https://shopapp-7e003.firebaseio.com/products.json?auth=$authToken";
     try {
       final response = await http.post(
         url,
@@ -102,7 +117,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'price': product.price,
             'imageUrl': product.imageUrl,
-            'isFavourite': false,
+            'creatorId': userId
           },
         ),
       );
@@ -121,7 +136,7 @@ class Products with ChangeNotifier {
     final index = _items.indexWhere((element) => element.id == product.id);
     if (index >= 0) {
       final url =
-          "https://shopapp-7e003.firebaseio.com/products/${product.id}.json";
+          "https://shopapp-7e003.firebaseio.com/products/${product.id}.json?auth=$authToken";
       await http.patch(
         url,
         body: json.encode(
@@ -143,10 +158,11 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = "https://shopapp-7e003.firebaseio.com/products/$id.json";
+    final url =
+        "https://shopapp-7e003.firebaseio.com/products/$id.json?auth=$authToken";
     final response = await http.delete(url);
-    if (response.statusCode >= 200) {
-      throw HTTPException('Couuld not delete product');
+    if (response.statusCode >= 400) {
+      throw HTTPException('Could not delete product');
     }
     _items.removeWhere((element) => element.id == id);
     notifyListeners();
