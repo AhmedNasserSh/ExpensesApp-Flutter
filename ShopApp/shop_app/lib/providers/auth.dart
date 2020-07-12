@@ -86,7 +86,6 @@ class Auth with ChangeNotifier {
     _token = userData['token'];
     _userId = userData['userId'];
     _expiryDate = expiryDate;
-    //  notifyListeners();
     return true;
   }
 
