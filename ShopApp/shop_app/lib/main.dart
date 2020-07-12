@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import './screens/product_overview_screen.dart';
 import './screens/product_detais_screen.dart';
 import './screens/cart_screen.dart';
@@ -13,6 +12,7 @@ import './screens/splash_screen.dart';
 import './providers/products.dart';
 import './providers/cart.dart';
 import './providers/orders.dart';
+import './helpers/custom_rouue.dart';
 
 void main() {
   // ignore: invalid_use_of_visible_for_testing_member
@@ -52,7 +52,11 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
               primarySwatch: Colors.purple,
               accentColor: Colors.deepOrange,
-              fontFamily: 'Lato'),
+              fontFamily: 'Lato',
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CustomPageTransitionsBuilder(),
+                TargetPlatform.iOS: CustomPageTransitionsBuilder()
+              })),
           home: auth.isAuth
               ? ProductOverViewScreen()
               : FutureBuilder(
