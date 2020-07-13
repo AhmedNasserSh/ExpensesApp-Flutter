@@ -1,6 +1,15 @@
 # shop_app
 
-A new Flutter project.
+A Simple Shop App  
+
+![Alt Text](https://media.giphy.com/media/huJnamr0CdRJI0xD8X/giphy.gif) 
+
+
+***This App uses***:
+1. http package to make request 
+2. provider package for mange statments 
+3. sharedPrefrences  package for data storing 
+
 
 ## Getting Started
 
