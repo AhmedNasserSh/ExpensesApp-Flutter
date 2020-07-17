@@ -2,7 +2,6 @@
 
 A Simple Shop App  
 
-![Alt Text](https://media.giphy.com/media/huJnamr0CdRJI0xD8X/giphy.gif) 
 
 
 ***This App uses***:
@@ -10,6 +9,7 @@ A Simple Shop App
 2. provider package for mange statments 
 3. sharedPrefrences  package for data storing 
 
+![Alt Text](https://media.giphy.com/media/huJnamr0CdRJI0xD8X/giphy.gif) 
 
 ## Getting Started
 
