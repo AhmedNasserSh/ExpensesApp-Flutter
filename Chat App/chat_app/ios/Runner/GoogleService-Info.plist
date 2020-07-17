@@ -7,7 +7,7 @@
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.481093669716-r634duv3jajof26jh4abv8g8djrqmn5v</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDcYxSxDk78L1ZUC1DKnf90g8oy3VnRuo0</string>
+	<string>Add me</string>
 	<key>GCM_SENDER_ID</key>
 	<string>481093669716</string>
 	<key>PLIST_VERSION</key>
@@ -19,15 +19,15 @@
 	<key>STORAGE_BUCKET</key>
 	<string>flutter-chat-bee59.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:481093669716:ios:53476c60d26b62f7f36ec1</string>
 	<key>DATABASE_URL</key>
