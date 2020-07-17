@@ -2,13 +2,15 @@
 
 A simple App shows places 
 
-<img src="snap shot.png" width="300" />
-
 ***This App uses***:
 1. sqflite package to make request 
 2. provider package for mange statments 
 3. image_picker for picking images from camera
 4. location & google_maps_flutter for manging locations and maps 
+
+<img src="snap shot.png" width="300" />
+
+
 
 
 

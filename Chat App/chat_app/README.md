@@ -1,6 +1,18 @@
 # chat_app
 
-A new Flutter project.
+A Simple Chat App  
+
+***This App uses***:
+1. Firebase FileStore (save chats)
+1. Firebase Auth (auth users)
+1. Firebase Storge (save users images)
+1. Firebase messaging (Push Notifications) 
+1. Firebase Function  (Trigger Push Notifications )
+
+<img src="screenshot.png" width="300" />
+
+
+
 
 ## Getting Started
 
